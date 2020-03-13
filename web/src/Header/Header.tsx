@@ -2,6 +2,7 @@ import React from 'react';
 import './header.scss';
 import {Container, Nav, Navbar} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 function Header() {
   return (
@@ -15,6 +16,7 @@ function Header() {
             <Link className="nav-link" to="/about">About</Link>
           </Nav>
         </Navbar.Collapse>
+        <LanguageSwitcher />
       </Container>
     </Navbar>
   );
