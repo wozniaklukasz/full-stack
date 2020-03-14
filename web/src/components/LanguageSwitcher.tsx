@@ -16,8 +16,8 @@ const LanguageSwitcher: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    i18n.changeLanguage(selectedLanguage);
-  }, [selectedLanguage]);
+    i18n.changeLanguage(selectedLanguage).then(r => r);
+  }, [i18n, selectedLanguage]);
 
   return (
     <Form.Check
