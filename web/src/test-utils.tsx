@@ -1,5 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
+import thunk from 'redux-thunk';
+import configureMockStore from 'redux-mock-store';
 import {render} from '@testing-library/react'
 import {makeStore} from './store/store';
 import {I18nextProvider} from 'react-i18next';
@@ -29,6 +31,8 @@ export function makeTestStore(opts = {}) {
   store.dispatch = jest.fn(origDispatch);
   return store;
 }
+
+export const mockStore = configureMockStore([thunk]);
 
 // re-export everything
 export * from '@testing-library/react'

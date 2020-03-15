@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeTestStore, testRender} from '../test-utils';
+import {makeTestStore, testRender} from '../../test-utils';
 import Footer from './Footer';
 
 describe('Footer tests.', () => {

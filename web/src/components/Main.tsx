@@ -1,5 +1,4 @@
 import React from 'react';
-import './main.scss';
 import {Container} from 'react-bootstrap';
 import About from '../pages/About';
 import Home from '../pages/Home';

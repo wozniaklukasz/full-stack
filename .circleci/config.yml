@@ -18,18 +18,16 @@ jobs: # a collection of steps
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+       - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
       - run: # run tests
           name: yarn test
-          command: yarn test -- --coverage
-#      - run: # run coverage report
-#          name: code-coverage
-#          command: './node_modules/.bin/nyc report --reporter=text-lcov'
-#      - store_artifacts: # special step to save test results as as artifact
-#          # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-#          path: test-results.xml
-#          prefix: tests
+          command: |
+            ./cc-test-reporter before-build
+            yarn test -- --coverage
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: coverage
-#          prefix: coverage
-#      - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-#          path: test-results.xml

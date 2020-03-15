@@ -21,7 +21,7 @@ i18n
     },
     lng: 'pl',
     fallbackLng: 'en',
-    debug: true, // logging
+    debug: false, // logging
 
     interpolation: {
       escapeValue: false, // not needed for react!!

@@ -8,6 +8,13 @@
 
 Project to play with the code. Spring & React stack.
 
+    .
+    ├── .circleci             # CircleCI config 
+    ├── web                   # Front-end project
+    ├── app                   # Back-end project
+    └── README.md
+
+
 ## Stack
 
 ### Front-end
@@ -18,14 +25,15 @@ Project to play with the code. Spring & React stack.
 - Styled with [Sass](https://sass-lang.com/) and [BEM methodology](https://en.bem.info/methodology/).
 - Interface powered by [react-bootstrap](https://react-bootstrap.github.io/).
 - Translated using [react-i18next](https://react.i18next.com/).
-- TODO: eslint.
-- TODO: tests.
+- Tested with [React Testing Library](https://testing-library.com/docs/react-testing-library/).
 
 ### Back-end
+
 todo
 
 ### Infrastructure
-todo
+
+- Continuous integration on [CircleCI](https://circleci.com/gh/wozniaklukasz/full-stack/).
 
 ## Setup
 
