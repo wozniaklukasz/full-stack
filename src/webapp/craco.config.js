@@ -3,7 +3,7 @@ module.exports = {
     port: 3007,
     // proxy: [{
     //   context: ['/rest', '/info'],
-    //   target: 'http://localhost:8082'
+    //   target: 'http://localhost:8087'
     // }]
   },
 };
