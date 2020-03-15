@@ -1,4 +1,8 @@
 {
   "pl": "Polski",
-  "en": "English"
+  "en": "English",
+
+  "Footer": {
+    "content": "footer test pl"
+  }
 }
