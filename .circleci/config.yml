@@ -33,6 +33,7 @@ jobs: # a collection of steps
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+      CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
     docker:
       - image: circleci/openjdk:11.0.3-jdk-stretch
 #      - image: circleci/postgres:12-alpine
@@ -44,10 +45,17 @@ jobs: # a collection of steps
       - attach_workspace:
           at: .
       - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
           name: Run back-end test
           command: |
+            ./cc-test-reporter before-build
             chmod +x gradlew
             ./gradlew test
+            ./cc-test-reporter after-build --coverage-input-type jacoco --exit-code $?
 #      - store_test_results:
 #          path: build/test-results/test
 #      - store_artifacts:
