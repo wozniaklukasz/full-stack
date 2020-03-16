@@ -45,17 +45,10 @@ jobs: # a collection of steps
       - attach_workspace:
           at: .
       - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-      - run:
           name: Run back-end test
           command: |
-            ./cc-test-reporter before-build
             chmod +x gradlew
             ./gradlew test
-            ./cc-test-reporter after-build --coverage-input-type jacoco --exit-code $?
 #      - store_test_results:
 #          path: build/test-results/test
 #      - store_artifacts:
