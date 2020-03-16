@@ -2,7 +2,12 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/full-stack
   environment:
+    # Configure the JVM and Gradle to avoid OOM errors
+    _JAVA_OPTIONS: "-Xmx3g"
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
     CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
+  docker:
+    - image: circleci/openjdk:11.0.3-jdk-stretch
 
 jobs:
   build:
@@ -20,13 +25,6 @@ jobs:
             - cc-test-reporter
   backend-tests:
     <<: *defaults
-    environment:
-      # Configure the JVM and Gradle to avoid OOM errors
-      _JAVA_OPTIONS: "-Xmx3g"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-      CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
-    docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
     steps:
       - checkout
       - attach_workspace:
