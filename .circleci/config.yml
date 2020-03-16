@@ -42,6 +42,7 @@ jobs:
             - codeclimate.backend.json
   frontend-tests:
     <<: *defaults
+    working_directory: ~/full-stack/src/webapp
     steps:
       - checkout
       - attach_workspace:
