@@ -7,21 +7,15 @@ defaults: &defaults
 jobs:
   build:
     <<: *defaults
-    environment:
-      # Configure the JVM and Gradle to avoid OOM errors
-      _JAVA_OPTIONS: "-Xmx3g"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-    docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
     steps:
       - run:
           name:  Download cc-test-reporter
           command: |
             mkdir -p tmp/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./full-stack/tmp/cc-test-reporter
-            chmod +x ./full-stack/tmp/cc-test-reporter
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
       - persist_to_workspace:
-          root: full-stack/tmp
+          root: tmp
           paths:
             - cc-test-reporter
   backend-tests:
@@ -35,15 +29,15 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/full-stack/tmp
+          at: ~/tmp
       - run:
           name: Run backend tests
           command: |
             chmod +x gradlew
             ./gradlew test
-            ./full-stack/tmp/cc-test-reporter format-coverage -t jacoco -o full-stack/tmp/codeclimate.backend.json build/customJacocoReportDir/test/
+            ./tmp/cc-test-reporter format-coverage -t jacoco -o full-stack/tmp/codeclimate.backend.json build/customJacocoReportDir/test/
       - persist_to_workspace:
-          root: full-stack/tmp
+          root: tmp
           paths:
             - codeclimate.backend.json
 #  frontend-tests:
