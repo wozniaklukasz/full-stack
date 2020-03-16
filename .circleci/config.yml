@@ -1,75 +1,95 @@
-version: 2.1 # use CircleCI 2.1
-jobs: # a collection of steps
-  #job
-  test-front-end: # runs not using Workflows must have a `build` job as entry point
-    working_directory: ~/full-stack/src/webapp # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
-    steps: # a collection of executable commands
-      - checkout: # special step to check out source code to working directory
-          path: ~/full-stack
+version: 2.1
+defaults: &defaults
+  working_directory: ~/full-stack
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
+  backend-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/full-stack/tmp
+      - environment:
+          # Configure the JVM and Gradle to avoid OOM errors
+          _JAVA_OPTIONS: "-Xmx3g"
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+          CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
+        docker:
+          - image: circleci/openjdk:11.0.3-jdk-stretch
+      - run:
+          name: Run backend tests
+          command: |
+            chmod +x gradlew
+            ./gradlew test
+            ./tmp/cc-test-reporter format-coverage -t jacoco -o tmp/codeclimate.backend.json build/customJacocoReportDir/test/
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.backend.json
+  frontend-tests:
+    <<: *defaults
+    steps:
+      - working_directory: ~/full-stack/src/webapp
+      - checkout
+      - docker:
+        - image: circleci/node:10.16.3
+      - attach_workspace:
+          at: ~/full-stack/tmp
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
-      - run:
-          name: Install front-end dependencies
-          command: yarn install
+      - run: yarn install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: # run tests
-          name: Run front-end tests
-          command: yarn test -- --coverage
-      - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: coverage
-  #job
-  test-back-end:
-    working_directory: ~/full-stack/src/ # directory where steps will run
-    # Remove if parallelism is not desired
-#    parallelism: 2
+      - run:
+          name: Run frontend testss
+          command: |
+            yarn test -- --coverage
+            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/lcov.info
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.frontend.json
+  upload-coverage:
+    <<: *defaults
     environment:
-      # Configure the JVM and Gradle to avoid OOM errors
-      _JAVA_OPTIONS: "-Xmx3g"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-      CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
-    docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
-#      - image: circleci/postgres:12-alpine
-#        environment:
-#          POSTGRES_USER: postgres
-#          POSTGRES_DB: circle_test
+      - CC_TEST_REPORTER_ID: YOUR_REPO_CC_TEST_REPORTER_ID
     steps:
-      - checkout
       - attach_workspace:
-          at: .
+          at: ~/full-stack/tmp
       - run:
-          name: Run back-end test
+          name: Upload coverage results to Code Climate
           command: |
-            chmod +x gradlew
-            ./gradlew test
-#      - store_test_results:
-#          path: build/test-results/test
-#      - store_artifacts:
-#          path: build/test-results/test
-#          when: always
-      - store_test_results:
-          path: build/customJacocoReportDir/test/
-          when: always
-      - run:
-          name: Assemble JAR
-          command: |
-            # Skip this for other nodes
-            if [ "$CIRCLE_NODE_INDEX" == 0 ]; then
-              ./gradlew assemble
-            fi
-      # This will be empty for all nodes except the first one
-      - store_artifacts:
-          path: build/libs
-
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 workflows:
-  workflow:
+  version: 2
+
+  commit:
     jobs:
-      - test-front-end
-      - test-back-end
+      - build
+      - backend-tests:
+          requires:
+            - build
+      - frontend-tests:
+          requires:
+            - build
+      - upload-coverage:
+          requires:
+            - backend-tests
+            - frontend-tests
