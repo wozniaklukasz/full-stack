@@ -19,6 +19,7 @@ jobs:
           paths:
             - cc-test-reporter
   backend-tests:
+    <<: *defaults
     environment:
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
