@@ -12,78 +12,78 @@ jobs:
           root: tmp
           paths:
             - cc-test-reporter
-  backend-tests:
-    environment:
-      # Configure the JVM and Gradle to avoid OOM errors
-      _JAVA_OPTIONS: "-Xmx3g"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
-      CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
-    docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/full-stack/tmp
-      - run:
-          name: Run backend tests
-          command: |
-            chmod +x gradlew
-            ./gradlew test
-            ./tmp/cc-test-reporter format-coverage -t jacoco -o tmp/codeclimate.backend.json build/customJacocoReportDir/test/
-      - persist_to_workspace:
-          root: tmp
-          paths:
-            - codeclimate.backend.json
-  frontend-tests:
-    working_directory: ~/full-stack/src/webapp
-    docker:
-      - image: circleci/node:10.16.3
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/full-stack/tmp
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Run frontend testss
-          command: |
-            yarn test -- --coverage
-            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/lcov.info
-      - persist_to_workspace:
-          root: tmp
-          paths:
-            - codeclimate.frontend.json
-  upload-coverage:
-    environment:
-      - CC_TEST_REPORTER_ID: YOUR_REPO_CC_TEST_REPORTER_ID
-    steps:
-      - attach_workspace:
-          at: ~/full-stack/tmp
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
-            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+#  backend-tests:
+#    environment:
+#      # Configure the JVM and Gradle to avoid OOM errors
+#      _JAVA_OPTIONS: "-Xmx3g"
+#      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+#      CC_TEST_REPORTER_ID: "8850fc04f1134b9f6852e7405bf94ca55fbf22dc16620015bac22ffe2230abe3"
+#    docker:
+#      - image: circleci/openjdk:11.0.3-jdk-stretch
+#    steps:
+#      - checkout
+#      - attach_workspace:
+#          at: ~/full-stack/tmp
+#      - run:
+#          name: Run backend tests
+#          command: |
+#            chmod +x gradlew
+#            ./gradlew test
+#            ./tmp/cc-test-reporter format-coverage -t jacoco -o tmp/codeclimate.backend.json build/customJacocoReportDir/test/
+#      - persist_to_workspace:
+#          root: tmp
+#          paths:
+#            - codeclimate.backend.json
+#  frontend-tests:
+#    working_directory: ~/full-stack/src/webapp
+#    docker:
+#      - image: circleci/node:10.16.3
+#    steps:
+#      - checkout
+#      - attach_workspace:
+#          at: ~/full-stack/tmp
+#      - restore_cache:
+#          keys:
+#            - v1-dependencies-{{ checksum "package.json" }}
+#            - v1-dependencies-
+#      - run: yarn install
+#      - save_cache:
+#          paths:
+#            - node_modules
+#          key: v1-dependencies-{{ checksum "package.json" }}
+#      - run:
+#          name: Run frontend testss
+#          command: |
+#            yarn test -- --coverage
+#            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/lcov.info
+#      - persist_to_workspace:
+#          root: tmp
+#          paths:
+#            - codeclimate.frontend.json
+#  upload-coverage:
+#    environment:
+#      - CC_TEST_REPORTER_ID: YOUR_REPO_CC_TEST_REPORTER_ID
+#    steps:
+#      - attach_workspace:
+#          at: ~/full-stack/tmp
+#      - run:
+#          name: Upload coverage results to Code Climate
+#          command: |
+#            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
+#            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+
 workflows:
   version: 2
-
   commit:
     jobs:
       - build
-      - backend-tests:
-          requires:
-            - build
-      - frontend-tests:
-          requires:
-            - build
-      - upload-coverage:
-          requires:
-            - backend-tests
-            - frontend-tests
+#      - backend-tests:
+#          requires:
+#            - build
+#      - frontend-tests:
+#          requires:
+#            - build
+#      - upload-coverage:
+#          requires:
+#            - backend-tests
+#            - frontend-tests
