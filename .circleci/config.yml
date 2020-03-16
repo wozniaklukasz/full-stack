@@ -40,7 +40,7 @@ jobs:
           command: |
             chmod +x gradlew
             ./gradlew test
-            ./tmp/cc-test-reporter format-coverage -t jacoco -o tmp/codeclimate.backend.json build/customJacocoReportDir/test/
+            ./full-stack/tmp/cc-test-reporter format-coverage -t jacoco -o full-stack/tmp/codeclimate.backend.json build/customJacocoReportDir/test/
       - persist_to_workspace:
           root: tmp
           paths:
