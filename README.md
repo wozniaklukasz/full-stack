@@ -1,12 +1,12 @@
 # full-stack
 
 ![github/languages/count](https://img.shields.io/github/languages/count/wozniaklukasz/full-stack?style=flat-square) 
-![david/dependencies](https://img.shields.io/david/wozniaklukasz/full-stack?path=web&style=flat-square)
 ![codeclimate/maintainability](https://img.shields.io/codeclimate/maintainability/wozniaklukasz/full-stack?style=flat-square) 
-![codeclimate/coverage](https://img.shields.io/codeclimate/coverage/wozniaklukasz/full-stack?style=flat-square) 
 ![circleci/build](https://img.shields.io/circleci/build/github/wozniaklukasz/full-stack?style=flat-square)
+<!--![david/dependencies](https://img.shields.io/david/wozniaklukasz/full-stack?path=web&style=flat-square)-->
+<!--![codeclimate/coverage](https://img.shields.io/codeclimate/coverage/wozniaklukasz/full-stack?style=flat-square)-->
 
-Project to play with the code. Spring & React stack.
+Project to play with the code. Spring & React stack. Data from [HearthstoneJSON](https://hearthstonejson.com/).
 
     .
     ├── .circleci             # CircleCI config 
