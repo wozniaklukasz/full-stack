@@ -1,14 +1,25 @@
-import React, {FC} from 'react';
+import React from 'react';
+import {getMockCardPl} from '../../tmpJsonApi';
 import {ICard} from './ICard';
 
-interface ICardComponent {
-  card: ICard
-}
+const Card = ({match}) => {
+  const {cardId} = match.params;
+  const card: ICard = getMockCardPl(cardId);
 
-const Card: FC<ICardComponent> = ({card}) => {
+  // todo: get locale img from state
+  const getCardImage = () => (
+    <img alt={card.name} src={`https://art.hearthstonejson.com/v1/render/latest/plPL/256x/${cardId}.png`} />
+  );
+
   return (
     <div>
-      {card.name}
+      <h1>{card.name}</h1>
+      {card.text}
+      {card.flavor}
+      MANA {card.cost}
+      ATK {card.attack}
+      HP {card.health}
+      {getCardImage()}
     </div>
   );
 };

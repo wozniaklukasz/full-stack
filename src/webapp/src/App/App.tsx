@@ -6,11 +6,14 @@ import {store} from '../store/store';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Main from '../components/Main';
+import { createBrowserHistory } from "history";
+
+const browserHistory = createBrowserHistory();
 
 function App() {
   return (
     <Provider store={store}>
-      <Router>
+      <Router history={browserHistory}>
         <Header/>
         <Main/>
         <Footer/>

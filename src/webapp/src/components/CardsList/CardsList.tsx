@@ -1,13 +1,13 @@
-import React, {FC} from 'react';
+import React from 'react';
 import {ICard} from '../Card/ICard';
-import Card from '../Card/Card';
 import {Button, Table} from 'react-bootstrap';
+import {Link} from "react-router-dom";
+import {getMockCardsPl} from '../../tmpJsonApi';
 
-interface ICardsListComponent {
-  cardsList: ICard[]
-}
+const cardsList = getMockCardsPl();
 
-const CardsList: FC<ICardsListComponent> = ({cardsList}) => {
+// https://tylermcginnis.com/react-router-nested-routes/
+const CardsList = ({match}) => {
   return (
     <div className='card-list'>
       <Table striped bordered hover size="sm">
@@ -28,9 +28,9 @@ const CardsList: FC<ICardsListComponent> = ({cardsList}) => {
             <td>{card.cardClass}</td>
             <td>{card.cost}</td>
             <td>
-              <a>
+              <Link to={`${match.url}/${card.id}`}>
                 <Button variant="primary">link</Button>
-              </a>
+              </Link>
             </td>
           </tr>
           : null))}
