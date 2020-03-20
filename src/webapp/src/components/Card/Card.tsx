@@ -1,25 +1,32 @@
-import React from 'react';
-import {getMockCardPl} from '../../tmpJsonApi';
+import React, {useEffect, useState} from 'react';
+import {Card as BCard} from 'react-bootstrap';
+import {getCard} from '../../services/card';
 import {ICard} from './ICard';
 
 const Card = ({match}) => {
   const {cardId} = match.params;
-  const card: ICard = getMockCardPl(cardId);
 
-  // todo: get locale img from state
-  const getCardImage = () => (
-    <img alt={card.name} src={`https://art.hearthstonejson.com/v1/render/latest/plPL/256x/${cardId}.png`} />
-  );
+  const [card, setCard] = useState<ICard | null>(null);
+
+  useEffect(() => {
+    getCard(cardId).then(card => setCard(card))
+  }, [cardId]);
+
+  if (!card) return null;
 
   return (
     <div>
-      <h1>{card.name}</h1>
-      {card.text}
-      {card.flavor}
-      MANA {card.cost}
-      ATK {card.attack}
-      HP {card.health}
-      {getCardImage()}
+      <BCard style={{ width: '18rem' }}>
+        <BCard.Img variant="top" src={card.imageUrl} />
+        <BCard.Body>
+          <BCard.Title>{card.name}</BCard.Title>
+          <BCard.Text>
+            {/*<div dangerouslySetInnerHTML={{ __html: card.text }} />*/}
+            {/*<i>{card.flavor}</i>*/}
+          </BCard.Text>
+        </BCard.Body>
+      </BCard>
+      <h1></h1>
     </div>
   );
 };

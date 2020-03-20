@@ -1,5 +1,6 @@
 export interface ICard {
   "id": string,
+  "imageUrl": string,
   "dbfId": number,
   "name": string,
   "text": string,

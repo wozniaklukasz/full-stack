@@ -1,13 +1,17 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {ICard} from '../Card/ICard';
 import {Button, Table} from 'react-bootstrap';
 import {Link} from "react-router-dom";
-import {getMockCardsPl} from '../../tmpJsonApi';
-
-const cardsList = getMockCardsPl();
+import {getCards} from '../../services/card';
 
 // https://tylermcginnis.com/react-router-nested-routes/
 const CardsList = ({match}) => {
+  const [cardsList, setCardList] = useState([]);
+
+  useEffect(() => {
+    getCards().then(cardList => setCardList(cardList))
+  }, []);
+
   return (
     <div className='card-list'>
       <Table striped bordered hover size="sm">
