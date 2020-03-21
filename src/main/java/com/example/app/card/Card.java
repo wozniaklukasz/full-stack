@@ -16,7 +16,7 @@ public class Card {
     private Long health;
 //    private String[] mechanics;
     private String rarity;
-    private String set;
+    private CardSet set;
     private String type;
 
     public Card(String id,
@@ -30,7 +30,7 @@ public class Card {
                 Long health,
 //                String[] mechanics,
                 String rarity,
-                String set,
+                CardSet set,
                 String type) {
         this.id = id;
         this.imageUrl = imageUrl;
@@ -135,11 +135,11 @@ public class Card {
         this.rarity = rarity;
     }
 
-    public String getSet() {
+    public CardSet getSet() {
         return set;
     }
 
-    public void setSet(String set) {
+    public void setSet(CardSet set) {
         this.set = set;
     }
 

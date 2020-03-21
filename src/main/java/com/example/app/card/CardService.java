@@ -15,7 +15,11 @@ import org.json.simple.parser.JSONParser;
 public class CardService {
     private <E extends Enum<E>> E getNullableEnumFromJSON(Class<E> clazz, String enumValue) {
         return enumValue != null ? E.valueOf(clazz, enumValue) : null;
-    };
+    }
+
+    private String getImageUrl(String id) {
+        return "https://art.hearthstonejson.com/v1/render/latest/plPL/256x/" + id + ".png";
+    }
 
     private Card getCardFromJSONObject(JSONObject jsonCard) {
         String id = (String) jsonCard.get("id");
@@ -28,9 +32,9 @@ public class CardService {
         Long health = (Long) jsonCard.get("health");
 //                String[] mechanics = (String[]) jsonCard.get("mechanics");
         String rarity = (String) jsonCard.get("rarity");
-        String set = (String) jsonCard.get("set");
+        CardSet set = getNullableEnumFromJSON(CardSet.class, (String) jsonCard.get("set"));
         String type = (String) jsonCard.get("type");
-        String imageUrl = "https://art.hearthstonejson.com/v1/render/latest/plPL/256x/" + id + ".png";
+        String imageUrl = getImageUrl(id);
 
         return new Card(id, imageUrl, name, text, flavor, attack, cardClass, cost, health, rarity, set, type);
     }
@@ -47,18 +51,19 @@ public class CardService {
             e.printStackTrace();
         }
 
-        // todo
-        return new JSONArray();
+        return null;
     }
 
     private List<Card> getCardEntityFromJson() {
         List<Card> cardList = new ArrayList<>();
         JSONArray cards = getCardsAsJSONArray();
 
-        for (Object card : cards) {
-            JSONObject jsonCard = (JSONObject) card;
+        if (cards != null) {
+            for (Object card : cards) {
+                JSONObject jsonCard = (JSONObject) card;
 
-            cardList.add(getCardFromJSONObject(jsonCard));
+                cardList.add(getCardFromJSONObject(jsonCard));
+            }
         }
 
         return cardList;
@@ -67,17 +72,18 @@ public class CardService {
     private Card getCardEntityFromJson(String cardId) {
         JSONArray cards = getCardsAsJSONArray();
 
-        for (Object card : cards) {
-            JSONObject jsonCard = (JSONObject) card;
-            String id = (String) jsonCard.get("id");
+        if (cards != null) {
+            for (Object card : cards) {
+                JSONObject jsonCard = (JSONObject) card;
+                String id = (String) jsonCard.get("id");
 
-            if (id.equals(cardId)) {
-                return getCardFromJSONObject(jsonCard);
+                if (id.equals(cardId)) {
+                    return getCardFromJSONObject(jsonCard);
+                }
             }
         }
 
-        // todo
-        return new Card("", "", "", "", "", 0L, null, 0L, 0L, "", "", "");
+        return null;
     }
 
     public List<Card> getCards() {
