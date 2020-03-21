@@ -1,5 +1,8 @@
 package com.example.app.card;
 
+
+import org.springframework.lang.Nullable;
+
 public class Card {
     private String id;
     private String imageUrl;
@@ -7,7 +10,8 @@ public class Card {
     private String text;
     private String flavor;
     private Long attack;
-    private String cardClass;
+    @Nullable
+    private CardClass cardClass;
     private Long cost;
     private Long health;
 //    private String[] mechanics;
@@ -21,7 +25,7 @@ public class Card {
                 String text,
                 String flavor,
                 Long attack,
-                String cardClass,
+                CardClass cardClass,
                 Long cost,
                 Long health,
 //                String[] mechanics,
@@ -91,11 +95,11 @@ public class Card {
         this.attack = attack;
     }
 
-    public String getCardClass() {
+    public CardClass getCardClass() {
         return cardClass;
     }
 
-    public void setCardClass(String cardClass) {
+    public void setCardClass(CardClass cardClass) {
         this.cardClass = cardClass;
     }
 

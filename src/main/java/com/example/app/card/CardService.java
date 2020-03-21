@@ -13,13 +13,17 @@ import org.json.simple.parser.JSONParser;
 
 @Service
 public class CardService {
+    private <E extends Enum<E>> E getNullableEnumFromJSON(Class<E> clazz, String enumValue) {
+        return enumValue != null ? E.valueOf(clazz, enumValue) : null;
+    };
+
     private Card getCardFromJSONObject(JSONObject jsonCard) {
         String id = (String) jsonCard.get("id");
         String name = (String) jsonCard.get("name");
         String text = (String) jsonCard.get("text");
         String flavor = (String) jsonCard.get("flavor");
         Long attack = (Long) jsonCard.get("attack");
-        String cardClass = (String) jsonCard.get("cardClass");
+        CardClass cardClass = getNullableEnumFromJSON(CardClass.class, (String) jsonCard.get("cardClass"));
         Long cost = (Long) jsonCard.get("cost");
         Long health = (Long) jsonCard.get("health");
 //                String[] mechanics = (String[]) jsonCard.get("mechanics");
@@ -32,6 +36,7 @@ public class CardService {
     }
 
     private JSONArray getCardsAsJSONArray() {
+        // todo Objects.requireNonNull
         String jsonDataDirPath = Objects.requireNonNull(getClass().getClassLoader().getResource("static/json/pl/25770.json")).getPath();
         JSONParser parser = new JSONParser();
 
@@ -72,7 +77,7 @@ public class CardService {
         }
 
         // todo
-        return new Card("", "", "", "", "", 0L, "", 0L, 0L, "", "", "");
+        return new Card("", "", "", "", "", 0L, null, 0L, 0L, "", "", "");
     }
 
     public List<Card> getCards() {
