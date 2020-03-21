@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,57 +13,67 @@ import org.json.simple.parser.JSONParser;
 
 @Service
 public class CardService {
-    // todo: think about json getters (list and one entity)
-    private List<Card> getCardEntityFromJson() {
-        String jsonDataDirPath = getClass().getClassLoader().getResource("static/json/pl/25770.json").getPath();
-        List<Card> cardList = new ArrayList<>();
+    private Card getCardFromJSONObject(JSONObject jsonCard) {
+        String id = (String) jsonCard.get("id");
+        String name = (String) jsonCard.get("name");
+        String text = (String) jsonCard.get("text");
+        String flavor = (String) jsonCard.get("flavor");
+        Long attack = (Long) jsonCard.get("attack");
+        String cardClass = (String) jsonCard.get("cardClass");
+        Long cost = (Long) jsonCard.get("cost");
+        Long health = (Long) jsonCard.get("health");
+//                String[] mechanics = (String[]) jsonCard.get("mechanics");
+        String rarity = (String) jsonCard.get("rarity");
+        String set = (String) jsonCard.get("set");
+        String type = (String) jsonCard.get("type");
+        String imageUrl = "https://art.hearthstonejson.com/v1/render/latest/plPL/256x/" + id + ".png";
+
+        return new Card(id, imageUrl, name, text, flavor, attack, cardClass, cost, health, rarity, set, type);
+    }
+
+    private JSONArray getCardsAsJSONArray() {
+        String jsonDataDirPath = Objects.requireNonNull(getClass().getClassLoader().getResource("static/json/pl/25770.json")).getPath();
         JSONParser parser = new JSONParser();
 
         try {
             Object obj = parser.parse(new FileReader(jsonDataDirPath));
-            JSONArray cards = (JSONArray) obj;
-
-            for (Object card : cards) {
-                JSONObject jsonCard = (JSONObject) card;
-
-                String id = (String) jsonCard.get("id");
-                String imageUrl = "https://art.hearthstonejson.com/v1/render/latest/plPL/256x/" + id + ".png";
-
-                cardList.add(new Card(id, imageUrl));
-            }
-
+            return (JSONArray) obj;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        // todo
+        return new JSONArray();
+    }
+
+    private List<Card> getCardEntityFromJson() {
+        List<Card> cardList = new ArrayList<>();
+        JSONArray cards = getCardsAsJSONArray();
+
+        for (Object card : cards) {
+            JSONObject jsonCard = (JSONObject) card;
+
+            cardList.add(getCardFromJSONObject(jsonCard));
         }
 
         return cardList;
     }
 
     private Card getCardEntityFromJson(String cardId) {
-        String jsonDataDirPath = getClass().getClassLoader().getResource("static/json/pl/25770.json").getPath();
-        JSONParser parser = new JSONParser();
+        JSONArray cards = getCardsAsJSONArray();
 
-        try {
-            Object obj = parser.parse(new FileReader(jsonDataDirPath));
-            JSONArray cards = (JSONArray) obj;
+        for (Object card : cards) {
+            JSONObject jsonCard = (JSONObject) card;
+            String id = (String) jsonCard.get("id");
 
-            for (Object card : cards) {
-                JSONObject jsonCard = (JSONObject) card;
-
-                String id = (String) jsonCard.get("id");
-                String imageUrl = "https://art.hearthstonejson.com/v1/render/latest/plPL/256x/" + id + ".png";
-
-                if (id.equals(cardId)) {
-                    return new Card(id, imageUrl);
-                }
+            if (id.equals(cardId)) {
+                return getCardFromJSONObject(jsonCard);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        return new Card("", "");
-    };
+        // todo
+        return new Card("", "", "", "", "", 0L, "", 0L, 0L, "", "", "");
+    }
 
     public List<Card> getCards() {
         return getCardEntityFromJson();
